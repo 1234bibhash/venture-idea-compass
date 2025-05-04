@@ -2,14 +2,14 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Link } from 'react-router-dom';
-import { BulbIcon } from 'lucide-react';
+import { Lightbulb } from 'lucide-react';
 
 const Navbar: React.FC = () => {
   return (
     <nav className="border-b border-gray-200 py-4 px-6 bg-white/80 backdrop-blur-md sticky top-0 z-10">
       <div className="container mx-auto flex justify-between items-center">
         <Link to="/" className="flex items-center space-x-2">
-          <BulbIcon className="h-8 w-8 text-primary" />
+          <Lightbulb className="h-8 w-8 text-primary" />
           <span className="font-bold text-xl">VentureCompass</span>
         </Link>
         
