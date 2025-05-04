@@ -8,9 +8,16 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
+import { useUser, SignedIn, SignedOut } from '@clerk/clerk-react';
+import { Link } from 'react-router-dom';
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useSubscription, incrementIdeasGenerated } from '@/hooks/useSubscription';
 
 const IdeaValidationForm: React.FC = () => {
   const navigate = useNavigate();
+  const { user } = useUser();
+  const { canGenerateMore, isPremium, remainingIdeas } = useSubscription();
+  
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -39,10 +46,22 @@ const IdeaValidationForm: React.FC = () => {
       return;
     }
     
+    // Check if user can generate more ideas
+    if (user && !canGenerateMore) {
+      toast.error("You've reached your idea validation limit. Please upgrade to Premium for unlimited validations.");
+      navigate('/pricing');
+      return;
+    }
+    
     setFormData(prev => ({ ...prev, isSubmitting: true }));
     
     // Store form data in localStorage for persistence between pages
     localStorage.setItem('ideaFormData', JSON.stringify(formData));
+    
+    // Increment idea count if user is signed in
+    if (user) {
+      incrementIdeasGenerated(user.id);
+    }
     
     // Navigate to results page with form data
     setTimeout(() => {
@@ -66,6 +85,49 @@ const IdeaValidationForm: React.FC = () => {
             Fill in the details below to get a comprehensive analysis of your idea's potential
           </CardDescription>
         </CardHeader>
+        
+        <SignedIn>
+          {!isPremium && (
+            <div className="px-6">
+              <Alert className="mb-6">
+                <AlertDescription>
+                  {remainingIdeas > 0 ? (
+                    <span>
+                      You have <strong>{remainingIdeas}</strong> idea validation{remainingIdeas !== 1 ? 's' : ''} remaining on your free plan.{' '}
+                      <Link to="/pricing" className="text-primary underline font-medium">
+                        Upgrade to Premium
+                      </Link>{' '}
+                      for unlimited validations.
+                    </span>
+                  ) : (
+                    <span>
+                      You've reached your idea validation limit.{' '}
+                      <Link to="/pricing" className="text-primary underline font-medium">
+                        Upgrade to Premium
+                      </Link>{' '}
+                      for unlimited validations.
+                    </span>
+                  )}
+                </AlertDescription>
+              </Alert>
+            </div>
+          )}
+        </SignedIn>
+        
+        <SignedOut>
+          <div className="px-6">
+            <Alert className="mb-6">
+              <AlertDescription>
+                <span>
+                  <Link to="/signup" className="text-primary underline font-medium">Sign up</Link> or{' '}
+                  <Link to="/login" className="text-primary underline font-medium">log in</Link>{' '}
+                  to save your results and unlock more validations.
+                </span>
+              </AlertDescription>
+            </Alert>
+          </div>
+        </SignedOut>
+        
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-6">
             <div className="space-y-2">
@@ -151,7 +213,7 @@ const IdeaValidationForm: React.FC = () => {
               type="submit" 
               size="lg" 
               className="w-full"
-              disabled={formData.isSubmitting}
+              disabled={formData.isSubmitting || (user && !canGenerateMore)}
             >
               {formData.isSubmitting ? "Analyzing..." : "Validate My Idea"}
             </Button>
