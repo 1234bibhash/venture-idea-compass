@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -9,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "sonner";
 
 const IdeaValidationForm: React.FC = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -39,19 +41,20 @@ const IdeaValidationForm: React.FC = () => {
     
     setFormData(prev => ({ ...prev, isSubmitting: true }));
     
-    // Simulate API call
+    // Store form data in localStorage for persistence between pages
+    localStorage.setItem('ideaFormData', JSON.stringify(formData));
+    
+    // Navigate to results page with form data
     setTimeout(() => {
-      setFormData(prev => ({ ...prev, isSubmitting: false }));
-      
-      // Navigate to results page (will implement this later)
-      window.location.href = '/results';
-    }, 2000);
+      navigate('/results', { state: { formData } });
+    }, 1000);
   };
   
   const industries = [
     "Technology", "Healthcare", "Finance", "Education", 
     "E-commerce", "Food & Beverage", "Travel", "Real Estate",
-    "Entertainment", "Fashion", "Logistics", "Other"
+    "Entertainment", "Fashion", "Logistics", "Software", 
+    "AI/Machine Learning", "Gaming", "Hardware", "Other"
   ];
 
   return (
