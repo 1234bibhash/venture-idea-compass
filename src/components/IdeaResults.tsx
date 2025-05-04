@@ -6,6 +6,7 @@ import { AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, Cart
 import { CheckIcon, XIcon, Download, FileText } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 import { toast } from "sonner";
+import { generateBusinessPlanDocument, downloadBlob } from "@/utils/documentGenerator";
 
 // Mock data for results
 const mockIdeaData = {
@@ -456,15 +457,26 @@ const IdeaResults: React.FC = () => {
   const handleGenerateBusinessPlan = () => {
     setIsGeneratingPlan(true);
     
-    // Simulate business plan generation
+    // Generate and download the business plan document
     setTimeout(() => {
-      setIsGeneratingPlan(false);
-      toast.success("Business plan generated successfully!");
-      
-      // In a real app, this would trigger a download or open a new tab
-      // For demo purposes, we'll just log to console
-      console.log("Business plan generated for:", ideaData.title);
-    }, 2000);
+      try {
+        // Generate the document
+        const documentBlob = generateBusinessPlanDocument(ideaData);
+        
+        // Create a sanitized filename
+        const filename = `${ideaData.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_business_plan.txt`;
+        
+        // Download the document
+        downloadBlob(documentBlob, filename);
+        
+        toast.success("Business plan downloaded successfully!");
+      } catch (error) {
+        console.error("Error generating business plan:", error);
+        toast.error("Failed to generate business plan. Please try again.");
+      } finally {
+        setIsGeneratingPlan(false);
+      }
+    }, 1000);
   };
 
   if (isLoading) {
