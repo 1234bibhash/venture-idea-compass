@@ -18,18 +18,18 @@ export const useSubscription = (): SubscriptionData => {
   const [ideasGenerated, setIdeasGenerated] = useState<number>(0);
   
   useEffect(() => {
-    if (!isSignedIn) return;
+    if (!isSignedIn || !user) return;
     
-    const userId = user?.id;
+    const userId = user.id;
     const storedValue = localStorage.getItem(`ventureCompass_ideasGenerated_${userId}`);
     if (storedValue) {
       setIdeasGenerated(parseInt(storedValue, 10));
     }
-  }, [isSignedIn, user?.id]);
+  }, [isSignedIn, user]);
   
-  // Mock premium status - in a real app this would check against your database
-  // For demo purposes, we'll always return free tier
-  const isPremium = false;
+  // Check if user has premium subscription (in a real app, check against your database)
+  // For demo purposes, let's check a flag in localStorage
+  const isPremium = isSignedIn && localStorage.getItem(`ventureCompass_isPremium_${user?.id}`) === 'true';
   const ideasLimit = isPremium ? Infinity : 2; // Free tier: 2, Premium: unlimited
   
   const remainingIdeas = Math.max(0, ideasLimit - ideasGenerated);
@@ -44,10 +44,15 @@ export const useSubscription = (): SubscriptionData => {
   };
 };
 
-export const incrementIdeasGenerated = (userId: string) => {
+export const incrementIdeasGenerated = (userId: string): number => {
   const key = `ventureCompass_ideasGenerated_${userId}`;
   const currentValue = parseInt(localStorage.getItem(key) || '0', 10);
   const newValue = currentValue + 1;
   localStorage.setItem(key, newValue.toString());
   return newValue;
 };
+
+export const setPremiumStatus = (userId: string, isPremium: boolean): void => {
+  localStorage.setItem(`ventureCompass_isPremium_${userId}`, isPremium.toString());
+};
+

@@ -7,22 +7,18 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Link } from 'react-router-dom';
+import { useSubscription } from '@/hooks/useSubscription';
 
 const Dashboard: React.FC = () => {
   const { user } = useUser();
+  const { isPremium, ideasGenerated, ideasLimit, remainingIdeas } = useSubscription();
   
-  // Mock user data - in a real app this would come from your database
-  const userData = {
-    plan: "free",
-    ideasGenerated: 1,
-    ideasLimit: 2,
-    ideaHistory: [
-      { title: "Mobile App for Local Service Booking", date: "2023-05-01", score: 82 }
-    ]
-  };
+  // Mock idea history - in a real app this would come from your database
+  const ideaHistory = [
+    { title: "Mobile App for Local Service Booking", date: "2023-05-01", score: 82 }
+  ];
   
-  const isPremium = userData.plan === "premium";
-  const usagePercentage = isPremium ? 0 : (userData.ideasGenerated / userData.ideasLimit) * 100;
+  const usagePercentage = isPremium ? 0 : (ideasGenerated / ideasLimit) * 100;
   
   return (
     <div className="min-h-screen flex flex-col">
@@ -52,7 +48,7 @@ const Dashboard: React.FC = () => {
                   <>
                     <div className="mb-2 flex justify-between text-sm">
                       <span>Ideas Used</span>
-                      <span>{userData.ideasGenerated} of {userData.ideasLimit}</span>
+                      <span>{ideasGenerated} of {ideasLimit}</span>
                     </div>
                     <Progress value={usagePercentage} className="h-2 mb-4" />
                     <Button asChild className="w-full mt-2">
@@ -111,7 +107,7 @@ const Dashboard: React.FC = () => {
           {/* Recent Ideas */}
           <div className="mb-8">
             <h2 className="text-2xl font-bold mb-4">Your Recent Ideas</h2>
-            {userData.ideaHistory.length > 0 ? (
+            {ideaHistory.length > 0 ? (
               <div className="bg-white rounded-lg shadow overflow-hidden">
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
@@ -131,7 +127,7 @@ const Dashboard: React.FC = () => {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {userData.ideaHistory.map((idea, index) => (
+                    {ideaHistory.map((idea, index) => (
                       <tr key={index}>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm font-medium text-gray-900">{idea.title}</div>

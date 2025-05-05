@@ -5,15 +5,54 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { CheckIcon } from "lucide-react";
 import { Link } from 'react-router-dom';
 import { useUser } from '@clerk/clerk-react';
+import { useSubscription, setPremiumStatus } from '@/hooks/useSubscription';
+import { toast } from "sonner";
 
 const PricingPlans: React.FC = () => {
-  const { isSignedIn } = useUser();
+  const { isSignedIn, user } = useUser();
+  const { isPremium } = useSubscription();
+  
+  const handleUpgradeToPremium = () => {
+    if (!isSignedIn || !user) {
+      toast.error("Please sign in to upgrade to premium");
+      return;
+    }
+    
+    // In a real application, this would redirect to a payment page
+    // For this demo, we'll simulate upgrading to premium
+    setPremiumStatus(user.id, true);
+    toast.success("Successfully upgraded to Premium! You now have unlimited idea validations.");
+    
+    // Force page refresh to update subscription status
+    setTimeout(() => {
+      window.location.reload();
+    }, 1500);
+  };
+  
+  const handleCancelPremium = () => {
+    if (!isSignedIn || !user) return;
+    
+    // In a real application, this would cancel the subscription
+    // For this demo, we'll just remove the premium status
+    setPremiumStatus(user.id, false);
+    toast.success("Premium subscription canceled. You are now on the free plan.");
+    
+    // Force page refresh to update subscription status
+    setTimeout(() => {
+      window.location.reload();
+    }, 1500);
+  };
   
   return (
     <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
       {/* Free Plan */}
-      <Card className="border-2 border-gray-200 shadow-md hover:shadow-lg transition-shadow">
+      <Card className={`border-2 ${!isPremium ? 'border-primary' : 'border-gray-200'} shadow-md hover:shadow-lg transition-shadow`}>
         <CardHeader className="text-center">
+          {!isPremium && (
+            <div className="bg-primary text-white py-1 px-3 rounded-full text-sm font-medium inline-block mb-2">
+              CURRENT PLAN
+            </div>
+          )}
           <CardTitle className="text-2xl">Free</CardTitle>
           <div className="mt-4">
             <span className="text-4xl font-bold">$0</span>
@@ -42,7 +81,7 @@ const PricingPlans: React.FC = () => {
           </ul>
         </CardContent>
         <CardFooter>
-          <Button asChild className="w-full">
+          <Button asChild variant="outline" className="w-full">
             <Link to={isSignedIn ? "/validate-idea" : "/signup"}>
               {isSignedIn ? "Start Now" : "Sign Up Free"}
             </Link>
@@ -51,11 +90,18 @@ const PricingPlans: React.FC = () => {
       </Card>
 
       {/* Premium Plan */}
-      <Card className="border-2 border-primary shadow-md hover:shadow-lg transition-shadow">
+      <Card className={`border-2 ${isPremium ? 'border-primary' : 'border-gray-200'} shadow-md hover:shadow-lg transition-shadow`}>
         <CardHeader className="text-center">
-          <div className="bg-primary text-white py-1 px-3 rounded-full text-sm font-medium inline-block mb-2">
-            RECOMMENDED
-          </div>
+          {!isPremium && (
+            <div className="bg-primary text-white py-1 px-3 rounded-full text-sm font-medium inline-block mb-2">
+              RECOMMENDED
+            </div>
+          )}
+          {isPremium && (
+            <div className="bg-primary text-white py-1 px-3 rounded-full text-sm font-medium inline-block mb-2">
+              CURRENT PLAN
+            </div>
+          )}
           <CardTitle className="text-2xl">Premium</CardTitle>
           <div className="mt-4">
             <span className="text-4xl font-bold">$9</span>
@@ -92,11 +138,15 @@ const PricingPlans: React.FC = () => {
           </ul>
         </CardContent>
         <CardFooter>
-          <Button asChild variant="default" className="w-full">
-            <Link to={isSignedIn ? "/validate-idea" : "/signup"}>
-              {isSignedIn ? "Upgrade Now" : "Get Premium"}
-            </Link>
-          </Button>
+          {isPremium ? (
+            <Button variant="outline" className="w-full" onClick={handleCancelPremium}>
+              Cancel Subscription
+            </Button>
+          ) : (
+            <Button className="w-full" onClick={handleUpgradeToPremium}>
+              {isSignedIn ? "Upgrade to Premium" : "Get Premium"}
+            </Button>
+          )}
         </CardFooter>
       </Card>
     </div>
