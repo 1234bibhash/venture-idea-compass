@@ -36,7 +36,7 @@ const App = () => (
                 <RedirectToDashboard />
               </SignedIn>
               <SignedOut>
-                <SignIn fallbackRedirectUrl="/dashboard" />
+                <SignIn redirectUrl="/dashboard" />
               </SignedOut>
             </>
           } />
@@ -46,7 +46,7 @@ const App = () => (
                 <RedirectToDashboard />
               </SignedIn>
               <SignedOut>
-                <SignIn fallbackRedirectUrl="/dashboard" />
+                <SignIn redirectUrl="/dashboard" />
               </SignedOut>
             </>
           } />
@@ -56,7 +56,7 @@ const App = () => (
                 <RedirectToDashboard />
               </SignedIn>
               <SignedOut>
-                <SignUp fallbackRedirectUrl="/dashboard" />
+                <SignUp redirectUrl="/dashboard" />
               </SignedOut>
             </>
           } />
@@ -66,7 +66,7 @@ const App = () => (
                 <RedirectToDashboard />
               </SignedIn>
               <SignedOut>
-                <SignUp fallbackRedirectUrl="/dashboard" />
+                <SignUp redirectUrl="/dashboard" />
               </SignedOut>
             </>
           } />
