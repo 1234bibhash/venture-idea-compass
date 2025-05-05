@@ -36,7 +36,17 @@ const App = () => (
                 <RedirectToDashboard />
               </SignedIn>
               <SignedOut>
-                <SignIn routing="path" path="/login" redirectUrl="/dashboard" />
+                <SignIn fallbackRedirectUrl="/dashboard" />
+              </SignedOut>
+            </>
+          } />
+          <Route path="/login/*" element={
+            <>
+              <SignedIn>
+                <RedirectToDashboard />
+              </SignedIn>
+              <SignedOut>
+                <SignIn fallbackRedirectUrl="/dashboard" />
               </SignedOut>
             </>
           } />
@@ -46,7 +56,17 @@ const App = () => (
                 <RedirectToDashboard />
               </SignedIn>
               <SignedOut>
-                <SignUp routing="path" path="/signup" redirectUrl="/dashboard" />
+                <SignUp fallbackRedirectUrl="/dashboard" />
+              </SignedOut>
+            </>
+          } />
+          <Route path="/signup/*" element={
+            <>
+              <SignedIn>
+                <RedirectToDashboard />
+              </SignedIn>
+              <SignedOut>
+                <SignUp fallbackRedirectUrl="/dashboard" />
               </SignedOut>
             </>
           } />
