@@ -36,7 +36,7 @@ const App = () => (
                 <RedirectToDashboard />
               </SignedIn>
               <SignedOut>
-                <SignIn redirectUrl="/dashboard" />
+                <SignIn routing="path" path="/login" afterSignInUrl="/dashboard" />
               </SignedOut>
             </>
           } />
@@ -46,7 +46,7 @@ const App = () => (
                 <RedirectToDashboard />
               </SignedIn>
               <SignedOut>
-                <SignIn redirectUrl="/dashboard" />
+                <SignIn routing="path" path="/login" afterSignInUrl="/dashboard" />
               </SignedOut>
             </>
           } />
@@ -56,7 +56,7 @@ const App = () => (
                 <RedirectToDashboard />
               </SignedIn>
               <SignedOut>
-                <SignUp redirectUrl="/dashboard" />
+                <SignUp routing="path" path="/signup" afterSignUpUrl="/dashboard" />
               </SignedOut>
             </>
           } />
@@ -66,7 +66,7 @@ const App = () => (
                 <RedirectToDashboard />
               </SignedIn>
               <SignedOut>
-                <SignUp redirectUrl="/dashboard" />
+                <SignUp routing="path" path="/signup" afterSignUpUrl="/dashboard" />
               </SignedOut>
             </>
           } />
